@@ -1,52 +1,39 @@
 package cn.crowdos.demo.entity;
 
-import cn.crowdos.kernel.constraint.Condition;
-import cn.crowdos.kernel.constraint.wrapper.DateCondition;
-import cn.crowdos.kernel.constraint.wrapper.IntegerCondition;
-import cn.crowdos.kernel.resource.AbstractParticipant;
-import cn.crowdos.kernel.resource.ability;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
+
+import java.io.Serializable;
+/**
+ * 用户信息
+ */
+@Data
+public class User implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    private Long id;
 
 
-public class User extends AbstractParticipant {
+    //姓名
+    private String name;
 
-    @ability
-    private IntegerCondition userId;
 
-    @ability
-    @JsonFormat(pattern = "yyyy.MM.dd")
-    private DateCondition activeTime;
+    //手机号
+    private String phone;
 
-    public User(IntegerCondition userId, DateCondition activeTime) {
-        this.userId = userId;
-        this.activeTime = activeTime;
-        this.status = ParticipantStatus.AVAILABLE;
-    }
 
-    public IntegerCondition getUserId() {
-        return userId;
-    }
+    //性别 0 女 1 男
+    private String sex;
 
-    public void setUserId(IntegerCondition userId) {
-        this.userId = userId;
-    }
 
-    public DateCondition getActiveTime() {
-        return activeTime;
-    }
+    //身份证号
+    private String idNumber;
 
-    public void setActiveTime(DateCondition activeTime) {
-        this.activeTime = activeTime;
-    }
 
-    @Override
-    public boolean hasAbility(Class<? extends Condition> aClass) {
-        return aClass == DateCondition.class;
-    }
+    //头像
+    private String avatar;
 
-    @Override
-    public Condition getAbility(Class<? extends Condition> aClass) {
-        if (!hasAbility(aClass)) return null;
-        return activeTime;
-    }
+
+    //状态 0:禁用，1:正常
+    private Integer status;
 }
