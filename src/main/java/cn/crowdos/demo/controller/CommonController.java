@@ -35,7 +35,7 @@ public class CommonController {
     @PostMapping("/upload")
     public R<String> upload(MultipartFile file){
         //file是一个临时文件，需要转存到指定位置，否则本次请求完成后临时文件会删除
-        log.info(file.toString());
+//        log.info(file.toString());
 
         //原始文件名
         String originalFilename = file.getOriginalFilename();//abc.jpg

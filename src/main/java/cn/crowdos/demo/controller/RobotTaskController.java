@@ -1,16 +1,25 @@
 package cn.crowdos.demo.controller;
 
+import cn.crowdos.demo.CrowdKernelComponent;
+import cn.crowdos.demo.GlobalComponent;
+import cn.crowdos.demo.RobotCoordinateComponent;
+import cn.crowdos.demo.VenueCoordinateComponent;
+import cn.crowdos.demo.common.R;
+import cn.crowdos.demo.entity.CoordinateParticipant;
+import cn.crowdos.demo.entity.CoordinateTask;
+import cn.crowdos.demo.entity.RobotTask;
+import cn.crowdos.demo.entity.TaskOnlyId;
+import cn.crowdos.demo.service.RobotTaskService;
+import cn.crowdos.demo.mapper.RobotTaskMapper;
 import cn.crowdos.kernel.algorithms.PT_Most;
 import cn.crowdos.kernel.constraint.Coordinate;
 import cn.crowdos.kernel.constraint.POIConstraint;
 import cn.crowdos.kernel.resource.Participant;
 import cn.crowdos.kernel.resource.Task;
-import cn.crowdos.demo.*;
-import cn.crowdos.demo.common.R;
-import cn.crowdos.demo.entity.*;
-import cn.crowdos.demo.service.RobotTaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -413,5 +422,35 @@ public class RobotTaskController {
         return R.success(tasksAssignMap);
 //        return R.success(task)
     }
-
+    @Autowired
+    private RobotTaskMapper robottaskmapper;
+    @GetMapping("/query")
+    public List query(){
+        List<RobotTask> list1=robottaskmapper.selectList(null);
+        System.out.println(list1);
+        return list1;
+    }
+    @PostMapping("/add")
+    public String save(RobotTask robottask){
+        int i=robottaskmapper.insert(robottask);
+        if(i>0){
+            return "插入成功";
+        }else{
+            return "插入失败";
+        }
+    }
+    @DeleteMapping("/delete/{taskId}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long taskId) {
+        try {
+            int rowsAffected = robottaskmapper.deleteById(taskId); // 使用MyBatis的deleteById方法删除记录
+            if (rowsAffected == 1) {
+                return ResponseEntity.ok("User with ID " + taskId + " deleted successfully.");
+            } else {
+                return ResponseEntity.notFound().build(); // 如果未找到匹配的记录，返回404
+            }
+        } catch (Exception e) {
+            // 处理异常情况，例如数据库访问问题
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting user: " + e.getMessage());
+        }
+    }
 }

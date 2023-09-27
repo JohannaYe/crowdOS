@@ -1,19 +1,20 @@
 package cn.crowdos.demo.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import cn.crowdos.demo.common.R;
 import cn.crowdos.demo.entity.User;
 import cn.crowdos.demo.service.UserService;
 import cn.crowdos.demo.utils.ValidateCodeUtils;
+import cn.crowdos.demo.mapper.UserMapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -37,7 +38,7 @@ public class UserController {
         if(StringUtils.isNotEmpty(phone)){
             //生成随机的4位验证码
             String code = ValidateCodeUtils.generateValidateCode(4).toString();
-            log.info("code={}",code);
+//            log.info("code={}",code);
 
             //调用阿里云提供的短信服务API完成发送短信
             //SMSUtils.sendMessage("wall-e","",phone,code);
@@ -59,7 +60,7 @@ public class UserController {
      */
     @PostMapping("/login")
     public R<User> login(@RequestBody Map map, HttpSession session){
-        log.info(map.toString());
+//        log.info(map.toString());
 
         //获取手机号
         String phone = map.get("phone").toString();
@@ -82,7 +83,7 @@ public class UserController {
                 //判断当前手机号对应的用户是否为新用户，如果是新用户就自动完成注册
                 user = new User();
                 user.setPhone(phone);
-                user.setStatus(1);
+//                user.setStatus(1);
                 userService.save(user);
             }
             session.setAttribute("user",user.getId());
@@ -90,5 +91,35 @@ public class UserController {
         }
         return R.error("登录失败");
     }
-
+    @Autowired
+    private UserMapper usermapper;
+    @GetMapping("/query")
+    public List query(){
+        List<User> list=usermapper.selectList(null);
+        System.out.println(list);
+        return list;
+    }
+    @PostMapping("/add")
+    public String save(User user){
+        int i=usermapper.insert(user);
+        if(i>0){
+            return "插入成功";
+        }else{
+            return "插入失败";
+        }
+    }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        try {
+            int rowsAffected = usermapper.deleteById(id); // 使用MyBatis的deleteById方法删除记录
+            if (rowsAffected == 1) {
+                return ResponseEntity.ok("User with ID " + id + " deleted successfully.");
+            } else {
+                return ResponseEntity.notFound().build(); // 如果未找到匹配的记录，返回404
+            }
+        } catch (Exception e) {
+            // 处理异常情况，例如数据库访问问题
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting user: " + e.getMessage());
+        }
+    }
 }
