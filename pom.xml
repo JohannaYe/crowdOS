@@ -56,6 +56,18 @@
             <version>1.18.20</version>
         </dependency>
 
+<!--        <dependency>-->
+<!--            <groupId>javax.crypto</groupId>-->
+<!--            <artifactId>javax.crypto-api</artifactId>-->
+<!--            <version>1.1.1</version>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.68</version>
+        </dependency>
+
+
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
@@ -138,6 +150,23 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>2.4.5</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                    <compilerArgs>
+                        <arg>-extdirs</arg>
+                        <arg>${project.basedir}/src/main/resources/lib</arg>
+                    </compilerArgs>
+                    <compilerArguments>
+                        <verbose/>
+                        <bootclasspath>${java.home}/lib/rt.jar;${java.home}/lib/jce.jar</bootclasspath>
+                    </compilerArguments>
+                </configuration>
             </plugin>
         </plugins>
     </build>
